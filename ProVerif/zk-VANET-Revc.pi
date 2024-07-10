@@ -1,0 +1,272 @@
+(*------------------------------- channel -----------------------------*)
+private free ch_LEA.
+private free ch_RCA.
+private free scL_RA.
+private free scRA_RU.
+private free scRA_V.
+free ch1.
+free ch2.
+free ch_BN.
+
+(*------------------------------- Constant-----------------------------*)
+data true/0.
+data false/0.
+data g1/0.
+data g2/0.
+data g/0.
+
+(*----------------------------- Constructors --------------------------*)
+fun T/1.
+fun con/2.
+fun CRH/1.
+fun eq/2.
+fun land/2.
+equation land(true,true)=true.
+equation eq(x,x)=true.
+fun add/2.
+equation add(x,y)=add(y,x).
+fun ADD/2.
+equation ADD(x,y)= ADD(y,x).
+fun sub/2.
+fun mul/2.
+reduc multinv(mul(x,mul(y,z)),z)=mul(x,y).
+
+fun div/2.
+fun emul/2.
+fun inv/1.
+fun exp/2.
+equation exp(exp(g1,x),y)=exp(exp(g1,y),x).
+fun BLP0/2.
+fun BLP/3.
+fun BLMUL/2.
+equation BLMUL(m,BLP(g1,g2,n))=BLMUL(n,BLP(g1,g2,m)).
+fun pk/1.
+fun sk/1.
+fun sign/2.
+fun getmess/1.
+fun checksign/3.
+equation getmess(sign(sk(k),m)) = m.
+equation checksign(pk(k),sign(sk(K),m),m)=true.
+
+fun public1/1. (* autogenerate ZK-theory *)
+fun public2/1.
+fun public3/1.
+fun public4/1.
+fun public5/1.
+
+fun alpha1/0. (* autogenerate ZK-theory *)
+fun alpha2/0.
+fun alpha3/0.
+fun alpha4/0.
+fun alpha5/0.
+
+fun beta1/0. (* autogenerate ZK-theory *)
+fun beta2/0.
+fun beta3/0.
+fun beta4/0.
+fun beta5/0.
+
+fun fakezk0/2.
+fun fakezk1/3.
+fun fakezk2/4.
+fun fakezk3/5.
+fun fakezk4/6.
+fun fakezk5/7.
+fun fakever/3.
+
+fun zk0/10.
+fun formula/1.
+fun fakepublic/2.
+fun zkver0/1.
+private fun pzk0/11.
+
+equation zk0(xalpha1x0,xalpha2x1,xalpha3x2,xalpha4x3,xalpha5x4,xbeta1x5,xbeta2x6,xbeta3x7,xbeta4x8,xbeta5x9)=pzk0(xalpha1x0,xalpha2x1,xalpha3x2,xalpha4x3,xalpha5x4,xbeta1x5,xbeta2x6,xbeta3x7,xbeta4x8,xbeta5x9, land(eq(xbeta4x8,CRH(con(con(con(xalpha1x0,xalpha2x1),xbeta1x5),xbeta3x7))),checksign(xbeta2x6,xalpha5x4,xbeta4x8))).
+equation zkver0(pzk0(xalpha1x0,xalpha2x1,xalpha3x2,xalpha4x3,xalpha5x4,xbeta1x5,xbeta2x6,xbeta3x7,xbeta4x8,xbeta5x9,true))=true.
+equation public1(pzk0(xalpha1x0,xalpha2x1,xalpha3x2,xalpha4x3,xalpha5x4,xbeta1x5,xbeta2x6,xbeta3x7,xbeta4x8,xbeta5x9,x10))=xbeta1x5.
+equation public2(pzk0(xalpha1x0,xalpha2x1,xalpha3x2,xalpha4x3,xalpha5x4,xbeta1x5,xbeta2x6,xbeta3x7,xbeta4x8,xbeta5x9,x10))=xbeta2x6.
+equation public3(pzk0(xalpha1x0,xalpha2x1,xalpha3x2,xalpha4x3,xalpha5x4,xbeta1x5,xbeta2x6,xbeta3x7,xbeta4x8,xbeta5x9,x10))=xbeta3x7.
+equation public4(pzk0(xalpha1x0,xalpha2x1,xalpha3x2,xalpha4x3,xalpha5x4,xbeta1x5,xbeta2x6,xbeta3x7,xbeta4x8,xbeta5x9,x10))=xbeta4x8.
+equation public5(pzk0(xalpha1x0,xalpha2x1,xalpha3x2,xalpha4x3,xalpha5x4,xbeta1x5,xbeta2x6,xbeta3x7,xbeta4x8,xbeta5x9,x10))=xbeta5x9.
+
+equation formula(pzk0(xalpha1x0,xalpha2x1,xalpha3x2,xalpha4x3,xalpha5x4,xbeta1x5,xbeta2x6,xbeta3x7,xbeta4x8,xbeta5x9,x10))= land(eq(beta4,CRH(con(con(con(alpha1,alpha2),beta1),beta3))),checksign(beta2,alpha5,beta4)).
+equation public1(fakezk2(x11,xbeta1x5,xbeta2x6,y12))=xbeta1x5.
+equation public1(fakezk3(x11,xbeta1x5,xbeta2x6,xbeta3x7,y12))=xbeta1x5.
+equation public1(fakezk4(x11,xbeta1x5,xbeta2x6,xbeta3x7,xbeta4x8,y12))=xbeta1x5.
+equation public1(fakezk5(x11,xbeta1x5,xbeta12x6,xbeta3x7,xbeta4x8,xbeta5x9,y12))= xbeta1x5.
+equation public2(fakezk3(x11,xbeta1x5,xbeta2x6,xbeta3x7,y12))=xbeta2x6.
+equation public2(fakezk4(x11,xbeta1x5,xbeta2x6,xbeta3x7,xbeta4x8,y12))=xbeta2x6.
+equation public2(fakezk5(x11,xbeta1x5,xbeta2x6,xbeta3x7,xbeta4x8,xbeta5x9,y12))=xbeta2x6.
+equation public3(fakezk4(x11,xbeta1x5,xbeta2x6,xbeta3x7,xbeta4x8,y12))=xbeta3x7.
+equation public3(fakezk5(x11,xbeta1x5,xbeta2x6,xbeta3x7,xbeta4x8,xbeta5x9,y12))=xbeta3x7.
+equation public4(fakezk5(x11,xbeta1x5,xbeta2x6,xbeta3x7,xbeta4x8,xbeta5x9,y12))=xbeta4x8.
+
+equation formula (fakezk0(x11,y12))=y12.
+equation formula (fakezk1(x11,xbeta1x5,y12))=y12.
+equation formula (fakezk2(x11,xbeta1x5,xbeta2x6,y12))=y12.
+equation formula (fakezk3(x11,xbeta1x5,xbeta2x6,xbeta3x7,y12))=y12.
+equation formula (fakezk4(x11,xbeta1x5,xbeta2x6,xbeta3x7,xbeta4x8,y12))=y12.
+equation formula (fakezk5(x11,xbeta1x5,xbeta2x6,xbeta3x8,xbeta4x8,xbeta5x9,y12))=y12.
+
+
+
+(*define proof= land(eq(beta4,CRH(con(con(con( alpha1,alpha2),beta1),beta3))),checksign(beta2,alpha5, beta4)). *)
+
+free ID_LEA.
+free id_RCAk.
+free id_Rj.
+private free id_Vi.
+(*----------------------------- query ---------------------------*)
+
+query attacker:id_Vi.
+query ev:GetCertificate(id_V) ==> ev:Register(id_V).
+query evinj:endAuth(M)==> evinj:beginAuth(M).
+
+(*----------------------------- code for LEA ---------------------*)
+
+let Init=
+new sk_LEA;
+let pk_LEA=emul(sk_LEA,g1) in 
+new p;
+out(ch1,(p,pk_LEA));
+out(ch_LEA,sk_LEA);
+new alpha;
+new beta;
+new delta;
+new gama;
+new x;
+
+let PK=(emul(delta,g1),emul(delta,g2),emul(mul(mul(gama,T(x)),inv(delta)),g1),emul(mul(T(x),inv(delta)),g1)) in
+let VK= (emul(delta,g2),BLP(g1,g2,mul(gama,T(x))),BLP(g1,g2,T(x))) in 
+out (ch2,(PK,VK)).
+
+let RCAInit=
+in(scL_RA,x);
+let (id_RCAk,sk_RCA,pk_RCA)=x in 
+new sk_SHK;
+
+let pk_SHK=emul(sk_SHK,g1) in 
+out(ch1,pk_SHK);
+out(scL_RA, sk_SHK).
+
+let LEA=Init |!RCAInit .
+(*----------------------------- code for RCA ---------------------*)
+let RA=
+new sk_RCA;
+in(ch1,x);
+let k=CRH(con(id_RCA,sk_RCA)) in 
+let pk_RCA=emul(k,g1) in 
+out(scL_RA,(id_RCA,sk_RCA,pk_RCA));
+out(ch1,pk_RCA).
+
+let VReg=
+in(ch1,X);
+let pk_SHK = X in
+in(scL_RA,sk_SHK) ;
+in (scRA_V,Y);
+let (ID_Vreg,pk_Vreg,PN_Vreg)=Y in 
+new TV;
+new sigmaV;
+let sigma=CRH(con(con(con(con(con(con(sigmaV,ID_Vreg),pk_Vreg),PN_Vreg),TV),pk_SHK),ID_LEA)) in
+let sign_sigma=sign(sk_SHK,sigma) in 
+let Cert_V=(sigma,sign_sigma) in 
+event Register(ID_Vreg);
+out(scRA_V,(ID_Vreg,sigmaV,TV,sigma,Cert_V)).
+
+let RReg=
+in(ch1,X);
+let (p,pk_SHK)=X in 
+in (scL_RA,sk_SHK);
+in(scRA_RU,Y);
+let (ID_Rreg,Loc_Rreg,pk_Rreg)=Y in 
+new TR;
+let sigma=CRH(con(con(con(con(con(ID_Rreg,pk_Rreg),Loc_Rreg),TR),pk_SHK),ID_LEA)) in 
+let sign_sigma= sign(sk_SHK,sigma) in 
+let Cert_R=(sigma,sign_sigma) in 
+event Register(ID_Rreg);
+out(scRA_RU,(ID_Rreg,TR,sigma,Cert_R)).
+
+let RCA= RA |!VReg | !RReg.
+(*----------------------------- code for RSU --------------------------*)
+let RSU=
+new sk_R;
+new LocR;
+let k=CRH(con(id_R,sk_R)) in 
+let pk_R=emul(k,g1) in 
+out (scRA_RU,(id_R,LocR,pk_R)) ;
+in (scRA_RU,X);
+let (ID_Rreg,TR,Cert_R)=X in 
+if ID_Rreg=id_R then
+let (sigma,sign_sigma)=Cert_R in 
+if getmess(sign_sigma)=sigma then 
+event GetCertificate(id_R).
+(*-------------------------- code for vehicle -------------------------*)
+
+let V=
+new sk_V;
+new PN_V;
+in (ch1,X);
+let (p,pk_SHK)=X in 
+in (ch2,Y);
+let (PK,VK)=Y in 
+let k=CRH(con(id_V,sk_V)) in 
+let pk_V=emul(k,g1) in 
+out(scRA_V,(id_V,pk_V,PN_V));
+in(scRA_V,Z);
+let (ID_Vreg,sigmaV,Tvi,Cert_V)=Z in 
+if ID_Vreg=id_V then 
+let (sigma,sign_sigma)=Cert_V in 
+if getmess(sign_sigma)=sigma then 
+event GetCertificate(id_V);
+let (g_A,g1_B,g_C,g2_B)= zk0(sigmaV,id_V,PN_V,pk_V,Cert_V,Tvi,pk_SHK,ID_LEA,sigma,PK) in 
+out (ch_BN,(g_A,g1_B,g_C,g2_B)).
+
+let VsendSoK=
+in(ch2,X);
+let (PK,VK)=X in 
+let (delta_g1,delta_g2,gamaTx_delta_g1,Tx_delta_g1)= PK in 
+in (ch_BN,zkp);
+let (g_A,g1_B,g_C,g2_B)= zkp in 
+new r;
+new s;
+new zeta;
+new M;
+let g1_A= ADD(g_A,emul(r,emul(zeta,delta_g1))) in 
+let g11_B= ADD(g1_B,emul(zeta,delta_g1)) in 
+let g22_B=ADD(g2_B,emul(s,emul(zeta,delta_g2))) in 
+let g1_C=ADD (emul(s,g_A),emul(r,g1_B)) in 
+let g11_C=ADD(emul(inv(zeta),g1_C),g1_C) in 
+let zd=emul(zeta,delta_g2) in 
+let m=CRH(con(con(con(con(g1_A,g22_B),g11_C),zd),M)) in 
+let g1_D=ADD(emul(mul(inv(add(zeta,m)),m),Tx_delta_g1),emul(inv(add(zeta,m)),gamaTx_delta_g1)) in 
+let zkp1=(g1_A,g11_B,g11_C,g22_B) in 
+let zkp2=(g1_D,zd) in 
+event beginAuth(M);
+out(ch1,(zkp1,zkp2,M)).
+
+let VverifySoK=
+in(ch2,Y);
+let (PK,VK)=Y in 
+let (delta_g2,gamaTx_gt,Tx_gt)=VK in 
+in (ch1,X);
+let (zkp1,zkp2,M)=X in 
+let xif1=zkver0(zkp1) in 
+if xif1=true then 
+let lid=public3(zkp1) in 
+if eq(lid,ID_LEA)=true then 
+let (g1_A,g11_B,g11_C,g22_B)=zkp1 in 
+let (g1_D,zd)=zkp2 in 
+let m=CRH(con(con(con(con(g1_A,g22_B),g11_C),zd),M)) in 
+let rhs= ADD(BLMUL(m,Tx_gt),gamaTx_gt)  in 
+let lhs= BLP0(g1_D,mul(zd,emul(m,delta_g2))) in 
+if rhs=lhs then
+event endAuth(M).
+let Vehicle=V |! VsendSoK | !VverifySoK.
+
+(*-------------------------- main Process -------------------------*)
+
+process 
+LEA| !(let id_RCA= id_RCAk in RCA) | !(let id_R=id_Rj in RSU)|! (let id_V=id_Vi in Vehicle)
+
+
+
+
