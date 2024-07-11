@@ -1,0 +1,217 @@
+(*------------------------------- channel -----------------------------*)
+private free ch_LEA.
+private free ch_RCA.
+private free ch_Veh.
+private free scL_RA.
+private free scRA_RU.
+private free scRA_V.
+private free ch_Wit.
+private free chRev_Acc.
+free ch1.
+free ch_BN.
+(*------------------------------- Constant-----------------------------*)
+data true/0.
+data false/0.
+data g1/0.
+data g2/0.
+data g/0.
+(*----------------------------- Constructors --------------------------*)
+fun con/2.
+fun CRH/1.
+fun eq/2.
+fun Chrfun/1.
+fun add/2.
+equation add(x,y)=add(y,x).
+fun ADD/2.
+equation ADD(x,y)= ADD(y,x).
+fun sub/2.
+fun mul/2.
+reduc multinv(mul(x,mul(y,z)),z)=mul(x,y).
+fun div/2.
+fun emul/2.
+fun inv/1.
+fun neg/1. 
+equation neg(neg(x))=x.
+fun exp/2.
+equation exp(exp(g1,x),y)=exp(exp(g1,y),x).
+fun BLP0/2.
+fun BLP/3.
+fun BLMUL/2.
+equation BLMUL(m,BLP(g1,g2,n))=BLMUL(n,BLP(g1,g2,m)).
+fun pk/1.
+fun sk/1.
+fun sign/2.
+fun getmess/1.
+fun checksign/3.
+equation getmess(sign(sk(k),m)) = m.
+equation checksign(pk(k),sign(sk(K),m),m)=true.
+
+free ID_LEA.
+free id_RCAk.
+free id_Rj.
+private free id_Vi.
+(*----------------------------- query ---------------------------*)
+
+query attacker:id_Vi.
+query ev:GetCertificate(id_V) ==> ev:Register(id_V).
+query evinj:RecWitness(Witness)==> evinj:SendWitness(Witness).
+query evinj:endValid(Witness)==> evinj:beginValid(Witness).
+
+(*----------------------------- code for LEA ---------------------*)
+
+let Init=
+new sk_LEA;
+let pk_LEA=emul(sk_LEA,g1) in 
+new p;
+out(ch1,(p,pk_LEA));
+out(ch_LEA,sk_LEA).
+
+let RCAInit=
+in(scL_RA,x);
+let (id_RCA,sk_RCA,pk_RCA)=x in 
+new sk_SHK;
+
+let pk_SHK=emul(sk_SHK,g1) in 
+out(ch1,pk_SHK);
+out(scL_RA, sk_SHK);
+let Rev_Acc=g1 in 
+let g1_r=g1 in 
+out (ch_BN,(Rev_Acc,g1_r)).
+
+let IssuWit= 
+in(scL_RA,x).
+let CrtWit=
+in (ch_LEA,sk_LEA);
+in(ch_Wit,sigmaV);
+in(chRev_Acc,x);
+let (Rev_Acc,r)=x in 
+let mo=Chrfun(neg(sigmaV)) in 
+let q= div(sub(Chrfun(sk_LEA),mo), add(sigmaV,sk_LEA)) in 
+let q'= emul(mul(add(sigmaV, sk_LEA),mul(q,r)),g1) in 
+out(scL_RA,(q',mo,sigmaV)).
+
+let RevWit=
+in(ch_LEA,sk_LEA);
+in(ch_Wit,sigmaV);
+in(chRev_Acc,x);
+let(Rev_Acc,r')=x in 
+let Rev_Acc' = exp(Rev_Acc,add(sigmaV,sk_LEA)) in 
+new r;
+let Rev_Accr= exp(Rev_Acc',r) in 
+let g1_r = emul(r,g1) in 
+out (ch_BN,(Rev_Acc,g1_r));
+out(chRev_Acc,(Rev_Acc',r));
+event RecWitness(sigmaV).
+
+let LEA=Init |!RCAInit | !CrtWit | !RevWit.
+(*----------------------------- code for RCA ---------------------*)
+let RA=
+new sk_RCA;
+in(ch1,x);
+let k=CRH(con(id_RCA,sk_RCA)) in 
+let pk_RCA=emul(k,g1) in 
+out(scL_RA,(id_RCA,sk_RCA,pk_RCA));
+out(ch1,pk_RCA).
+
+let Revalrm=
+in (ch1,sigmaV);
+out (ch_wit,sigmaV);
+event SendWitness(Witness).
+
+let VReg=
+in(ch1,X);
+let pk_SHK = X in
+in(scL_RA,sk_SHK) ;
+in (scRA_V,Y);
+let (ID_Vreg,pk_Vreg,PN_Vreg)=Y in 
+new TV;
+new sigmaV;
+let sigma=CRH(con(con(con(con(con(con(sigmaV,ID_Vreg),pk_Vreg),PN_Vreg),TV),pk_SHK),ID_LEA)) in
+let sign_sigma=sign(sk_SHK,sigma) in 
+let Cert_V=(sigma,sign_sigma) in 
+event Register(ID_Vreg);
+out(scRA_V,(ID_Vreg,sigmaV,TV,sigma,Cert_V)).
+
+let RReg=
+in(ch1,X);
+let (p,pk_SHK)=X in 
+in (scL_RA,sk_SHK);
+in(scRA_RU,Y);
+let (ID_Rreg,Loc_Rreg,pk_Rreg)=Y in 
+new TR;
+let sigma=CRH(con(con(con(con(con(ID_Rreg,pk_Rreg),Loc_Rreg),TR),pk_SHK),ID_LEA)) in 
+let sign_sigma= sign(sk_SHK,sigma) in 
+let Cert_R=(sigma,sign_sigma) in 
+event Register(ID_Rreg);
+out(scRA_RU,(ID_Rreg,TR,sigma,Cert_R)).
+
+let RCA= RA | !Revalrm |!VReg | !RReg.
+(*----------------------------- code for RSU --------------------------*)
+let RSU=
+new sk_R;
+new LocR;
+let k=CRH(con(id_R,sk_R)) in 
+let pk_R=emul(k,g1) in 
+out (scRA_RU,(id_R,LocR,pk_R)) ;
+in (scRA_RU,X);
+let (ID_Rreg,TR,Cert_R)=X in 
+if ID_Rreg=id_R then
+let (sigma,sign_sigma)=Cert_R in 
+if getmess(sign_sigma)=sigma then 
+event GetCertificate(id_R).
+(*-------------------------- code for vehicle -------------------------*)
+
+let V=
+new sk_V;
+new PN_V;
+in (ch1,X);
+let (p,pk_SHK)=X in 
+let k=CRH(con(id_V,sk_V)) in 
+let pk_V=emul(k,g1) in 
+out(scRA_V,(id_V,pk_V,PN_V));
+in(scRA_V,Z);
+let (ID_Vreg,sigmaV,Tvi,Cert_V)=Z in 
+if ID_Vreg=id_V then 
+let (sigma,sign_sigma)=Cert_V in 
+if getmess(sign_sigma)=sigma then 
+event GetCertificate(id_V);
+in (scRA_V, Witness);
+let (q',mo)= Witness in 
+in (ch_BN,z);
+let (Rev_Acc, g1_r)=z in 
+out(ch_Veh,(sigmaV,q', mo,Rev_Acc,g1_r)).
+
+let Vsendwit=
+in(ch_BN,X);
+let (Rev_Accr,g1_r)=X in 
+in(ch_Veh, z);
+let (sigmaV,q_t',mo_t',Rev_Acc',g1_r') =z in 
+let mo_t= Chrfun(neg(sigmaV)) in 
+let q_t=mul(q_t',div(mul(Rev_Accr,exp(g1_r',mo_t')), mul(Rev_Acc',exp(g1_r,mo_t)))) in
+new gama;
+let mo_t_gama=mul(mo_t,inv(gama)) in 
+let q_t_gama= exp(q_t, gama) in 
+let Witness =(q_t_gama,mo_t_gama) in 
+out (ch_Veh,(sigmaV,q_t,mo_t,Rev_Accr,g1_r));
+event beginValid(Witness);
+out (ch1,(q_t_gama, mo_t_gama)).
+
+let Vverifywit=
+in(ch_BN,Y);
+let (Rev_Acc,g1_r)=Y in 
+in(ch1,Witness);
+let (q_t',mo_t')= Witness in 
+let lhs= ADD(BLP0(q_t',g2),BLP0(emul(mo_t',g1),g2)) in 
+let rhs=BLP0(Rev_Acc,g2) in 
+if rhs=lhs then 
+event endValid(Witness).
+let Vehicle=V |! Vsendwit | !Vverifywit.
+
+(*-------------------------- main Process -------------------------*)
+
+process 
+LEA| !(let id_RCA= id_RCAk in RCA) | !(let id_R=id_Rj in RSU)|! (let id_V=id_Vi in Vehicle)
+
+
+
+
